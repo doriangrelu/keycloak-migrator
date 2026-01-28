@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:kcm="http://keycloak-migrator.com/changelog"
+           targetNamespace="http://keycloak-migrator.com/changelog"
+           elementFormDefault="qualified">
+
+    <!-- Root Element -->
+    <xs:element name="changelog" type="kcm:changelogType"/>
+
+    <xs:complexType name="changelogType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="changeset" type="kcm:changesetType"/>
+            <xs:element name="include" type="kcm:includeType"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="includeType">
+        <xs:attribute name="file" type="xs:string" use="required"/>
+        <xs:attribute name="relativeToChangelogFile" type="xs:boolean" default="true"/>
+    </xs:complexType>
+
+    <xs:complexType name="changesetType">
+        <xs:sequence>
+            <xs:element name="comment" type="xs:string" minOccurs="0"/>
+            <xs:choice minOccurs="1" maxOccurs="unbounded">
+                <!-- Realm operations -->
+                <xs:element name="createRealm" type="kcm:createRealmType"/>
+                <xs:element name="updateRealm" type="kcm:updateRealmType"/>
+                <xs:element name="deleteRealm" type="kcm:deleteRealmType"/>
+                <!-- Client operations -->
+                <xs:element name="createClient" type="kcm:createClientType"/>
+                <xs:element name="updateClient" type="kcm:updateClientType"/>
+                <xs:element name="deleteClient" type="kcm:deleteClientType"/>
+                <!-- User operations -->
+                <xs:element name="createUser" type="kcm:createUserType"/>
+                <xs:element name="updateUser" type="kcm:updateUserType"/>
+                <xs:element name="deleteUser" type="kcm:deleteUserType"/>
+                <!-- Role operations -->
+                <xs:element name="createRealmRole" type="kcm:createRealmRoleType"/>
+                <xs:element name="createClientRole" type="kcm:createClientRoleType"/>
+                <xs:element name="deleteRole" type="kcm:deleteRoleType"/>
+                <!-- Group operations -->
+                <xs:element name="createGroup" type="kcm:createGroupType"/>
+                <xs:element name="deleteGroup" type="kcm:deleteGroupType"/>
+                <!-- Client Scope operations -->
+                <xs:element name="createClientScope" type="kcm:createClientScopeType"/>
+                <xs:element name="deleteClientScope" type="kcm:deleteClientScopeType"/>
+                <!-- Identity Provider operations -->
+                <xs:element name="createIdentityProvider" type="kcm:createIdentityProviderType"/>
+                <xs:element name="deleteIdentityProvider" type="kcm:deleteIdentityProviderType"/>
+                <!-- Protocol Mapper operations -->
+                <xs:element name="createProtocolMapper" type="kcm:createProtocolMapperType"/>
+                <xs:element name="deleteProtocolMapper" type="kcm:deleteProtocolMapperType"/>
+                <!-- Authentication Flow operations -->
+                <xs:element name="createAuthenticationFlow" type="kcm:createAuthenticationFlowType"/>
+                <xs:element name="deleteAuthenticationFlow" type="kcm:deleteAuthenticationFlowType"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="version" type="xs:int" use="required"/>
+        <xs:attribute name="author" type="xs:string" use="required"/>
+        <xs:attribute name="context" type="xs:string"/>
+        <xs:attribute name="failOnError" type="xs:boolean" default="true"/>
+    </xs:complexType>
+
+    <!-- Realm Types -->
+    <xs:complexType name="createRealmType">
+        <xs:sequence>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="displayNameHtml" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="registrationAllowed" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="verifyEmail" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="resetPasswordAllowed" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="loginWithEmailAllowed" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="duplicateEmailsAllowed" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="rememberMe" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="bruteForceProtected" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="sslRequired" type="xs:string" minOccurs="0"/>
+            <xs:element name="accessTokenLifespan" type="xs:int" minOccurs="0"/>
+            <xs:element name="ssoSessionIdleTimeout" type="xs:int" minOccurs="0"/>
+            <xs:element name="ssoSessionMaxLifespan" type="xs:int" minOccurs="0"/>
+            <xs:element name="passwordPolicy" type="xs:string" minOccurs="0"/>
+            <xs:element name="loginTheme" type="xs:string" minOccurs="0"/>
+            <xs:element name="accountTheme" type="xs:string" minOccurs="0"/>
+            <xs:element name="adminTheme" type="xs:string" minOccurs="0"/>
+            <xs:element name="emailTheme" type="xs:string" minOccurs="0"/>
+            <xs:element name="internationalizationEnabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="supportedLocales" type="kcm:stringListType" minOccurs="0"/>
+            <xs:element name="defaultLocale" type="xs:string" minOccurs="0"/>
+            <xs:element name="smtpServer" type="kcm:smtpConfigType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="updateRealmType">
+        <xs:sequence>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="sslRequired" type="xs:string" minOccurs="0"/>
+            <xs:element name="accessTokenLifespan" type="xs:int" minOccurs="0"/>
+            <xs:element name="passwordPolicy" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteRealmType">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="smtpConfigType">
+        <xs:sequence>
+            <xs:element name="host" type="xs:string"/>
+            <xs:element name="port" type="xs:string" minOccurs="0"/>
+            <xs:element name="from" type="xs:string"/>
+            <xs:element name="fromDisplayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="ssl" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="starttls" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="auth" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="user" type="xs:string" minOccurs="0"/>
+            <xs:element name="password" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Client Types -->
+    <xs:complexType name="createClientType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="protocol" type="xs:string" minOccurs="0"/>
+            <xs:element name="publicClient" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="bearerOnly" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="standardFlowEnabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="directAccessGrantsEnabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="serviceAccountsEnabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="rootUrl" type="xs:string" minOccurs="0"/>
+            <xs:element name="baseUrl" type="xs:string" minOccurs="0"/>
+            <xs:element name="adminUrl" type="xs:string" minOccurs="0"/>
+            <xs:element name="redirectUris" type="kcm:uriListType" minOccurs="0"/>
+            <xs:element name="webOrigins" type="kcm:originListType" minOccurs="0"/>
+            <xs:element name="secret" type="xs:string" minOccurs="0"/>
+            <xs:element name="defaultClientScopes" type="kcm:scopeListType" minOccurs="0"/>
+            <xs:element name="optionalClientScopes" type="kcm:scopeListType" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:attributeListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="updateClientType">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string" minOccurs="0"/>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="redirectUris" type="kcm:uriListType" minOccurs="0"/>
+            <xs:element name="webOrigins" type="kcm:originListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteClientType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- User Types -->
+    <xs:complexType name="createUserType">
+        <xs:sequence>
+            <xs:element name="email" type="xs:string" minOccurs="0"/>
+            <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+            <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="emailVerified" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="password" type="xs:string" minOccurs="0"/>
+            <xs:element name="temporaryPassword" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="realmRoles" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="groups" type="kcm:groupListType" minOccurs="0"/>
+            <xs:element name="requiredActions" type="kcm:actionListType" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:userAttributeListType" minOccurs="0"/>
+            <xs:element name="clientRoles" type="kcm:clientRoleMappingListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="username" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="updateUserType">
+        <xs:sequence>
+            <xs:element name="email" type="xs:string" minOccurs="0"/>
+            <xs:element name="firstName" type="xs:string" minOccurs="0"/>
+            <xs:element name="lastName" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="addRealmRoles" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="removeRealmRoles" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="addGroups" type="kcm:groupListType" minOccurs="0"/>
+            <xs:element name="removeGroups" type="kcm:groupListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="username" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteUserType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="username" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Role Types -->
+    <xs:complexType name="createRealmRoleType">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="composite" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="composites" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:attributeListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="createClientRoleType">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="composite" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="composites" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:attributeListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteRoleType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string"/>
+    </xs:complexType>
+
+    <!-- Group Types -->
+    <xs:complexType name="createGroupType">
+        <xs:sequence>
+            <xs:element name="path" type="xs:string" minOccurs="0"/>
+            <xs:element name="parentGroup" type="xs:string" minOccurs="0"/>
+            <xs:element name="realmRoles" type="kcm:roleListType" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:userAttributeListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteGroupType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Client Scope Types -->
+    <xs:complexType name="createClientScopeType">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0"/>
+            <xs:element name="protocol" type="xs:string" minOccurs="0"/>
+            <xs:element name="includeInTokenScope" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="attributes" type="kcm:attributeListType" minOccurs="0"/>
+            <xs:element name="protocolMappers" type="kcm:protocolMapperListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteClientScopeType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Identity Provider Types -->
+    <xs:complexType name="createIdentityProviderType">
+        <xs:sequence>
+            <xs:element name="displayName" type="xs:string" minOccurs="0"/>
+            <xs:element name="enabled" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="trustEmail" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="storeToken" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="linkOnly" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="firstBrokerLoginFlowAlias" type="xs:string" minOccurs="0"/>
+            <xs:element name="config" type="kcm:configListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="alias" type="xs:string" use="required"/>
+        <xs:attribute name="providerId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteIdentityProviderType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="alias" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Protocol Mapper Types -->
+    <xs:complexType name="createProtocolMapperType">
+        <xs:sequence>
+            <xs:element name="consentRequired" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="config" type="kcm:configListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string"/>
+        <xs:attribute name="clientScopeName" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="protocol" type="xs:string" use="required"/>
+        <xs:attribute name="protocolMapper" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteProtocolMapperType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="clientId" type="xs:string"/>
+        <xs:attribute name="clientScopeName" type="xs:string"/>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Authentication Flow Types -->
+    <xs:complexType name="createAuthenticationFlowType">
+        <xs:sequence>
+            <xs:element name="flowDescription" type="xs:string" minOccurs="0"/>
+            <xs:element name="providerId" type="xs:string" minOccurs="0"/>
+            <xs:element name="topLevel" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="builtIn" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="executions" type="kcm:executionListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="alias" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="deleteAuthenticationFlowType">
+        <xs:attribute name="realm" type="xs:string" use="required"/>
+        <xs:attribute name="alias" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <!-- Helper Types -->
+    <xs:complexType name="stringListType">
+        <xs:sequence>
+            <xs:element name="locale" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="uriListType">
+        <xs:sequence>
+            <xs:element name="uri" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="originListType">
+        <xs:sequence>
+            <xs:element name="origin" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="scopeListType">
+        <xs:sequence>
+            <xs:element name="scope" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="roleListType">
+        <xs:sequence>
+            <xs:element name="role" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="groupListType">
+        <xs:sequence>
+            <xs:element name="group" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="actionListType">
+        <xs:sequence>
+            <xs:element name="action" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="attributeListType">
+        <xs:sequence>
+            <xs:element name="attribute" type="kcm:attributeEntryType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="attributeEntryType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="key" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="userAttributeListType">
+        <xs:sequence>
+            <xs:element name="attribute" type="kcm:userAttributeType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="userAttributeType">
+        <xs:sequence>
+            <xs:element name="value" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="key" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="clientRoleMappingListType">
+        <xs:sequence>
+            <xs:element name="client" type="kcm:clientRoleMappingType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="clientRoleMappingType">
+        <xs:sequence>
+            <xs:element name="role" type="xs:string" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="clientId" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="configListType">
+        <xs:sequence>
+            <xs:element name="entry" type="kcm:attributeEntryType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="protocolMapperListType">
+        <xs:sequence>
+            <xs:element name="mapper" type="kcm:protocolMapperType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="protocolMapperType">
+        <xs:sequence>
+            <xs:element name="consentRequired" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="config" type="kcm:configListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="protocol" type="xs:string" use="required"/>
+        <xs:attribute name="protocolMapper" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="executionListType">
+        <xs:sequence>
+            <xs:element name="execution" type="kcm:executionType" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="executionType">
+        <xs:sequence>
+            <xs:element name="authenticatorFlow" type="xs:boolean" minOccurs="0"/>
+            <xs:element name="flowAlias" type="xs:string" minOccurs="0"/>
+            <xs:element name="config" type="kcm:configListType" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="authenticator" type="xs:string" use="required"/>
+        <xs:attribute name="requirement" type="xs:string"/>
+        <xs:attribute name="priority" type="xs:int"/>
+    </xs:complexType>
+
+</xs:schema>

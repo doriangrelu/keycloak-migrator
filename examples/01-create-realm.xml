@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 1: Creating a Realm
+
+    This changelog demonstrates how to create a new Keycloak realm
+    with various configuration options.
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <changeset version="1" author="admin">
+        <comment>Create the production realm with security settings</comment>
+
+        <createRealm name="production">
+            <!-- Display settings -->
+            <displayName>Production Environment</displayName>
+            <enabled>true</enabled>
+
+            <!-- User registration settings -->
+            <registrationAllowed>false</registrationAllowed>
+            <resetPasswordAllowed>true</resetPasswordAllowed>
+            <loginWithEmailAllowed>true</loginWithEmailAllowed>
+            <duplicateEmailsAllowed>false</duplicateEmailsAllowed>
+            <verifyEmail>true</verifyEmail>
+            <rememberMe>true</rememberMe>
+
+            <!-- Security settings -->
+            <sslRequired>external</sslRequired>
+            <bruteForceProtected>true</bruteForceProtected>
+
+            <!-- Token lifespans (in seconds) -->
+            <accessTokenLifespan>300</accessTokenLifespan>
+            <ssoSessionIdleTimeout>1800</ssoSessionIdleTimeout>
+            <ssoSessionMaxLifespan>36000</ssoSessionMaxLifespan>
+
+            <!-- Password policy -->
+            <passwordPolicy>length(8) and upperCase(1) and lowerCase(1) and digits(1) and specialChars(1)</passwordPolicy>
+
+            <!-- Themes -->
+            <loginTheme>keycloak</loginTheme>
+            <accountTheme>keycloak.v2</accountTheme>
+            <emailTheme>keycloak</emailTheme>
+
+            <!-- Internationalization -->
+            <internationalizationEnabled>true</internationalizationEnabled>
+            <supportedLocales>
+                <locale>en</locale>
+                <locale>fr</locale>
+                <locale>de</locale>
+            </supportedLocales>
+            <defaultLocale>en</defaultLocale>
+
+            <!-- SMTP configuration (optional) -->
+            <smtpServer>
+                <host>smtp.example.com</host>
+                <port>587</port>
+                <from>noreply@example.com</from>
+                <fromDisplayName>Production System</fromDisplayName>
+                <starttls>true</starttls>
+                <auth>true</auth>
+                <user>smtp-user</user>
+                <password>smtp-password</password>
+            </smtpServer>
+        </createRealm>
+    </changeset>
+
+</changelog>

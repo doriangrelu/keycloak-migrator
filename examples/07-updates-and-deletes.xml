@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 7: Updates and Deletes
+
+    This changelog demonstrates:
+    - Updating existing resources
+    - Deleting resources
+    - Managing user role assignments
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Update Realm Settings -->
+    <changeset version="20" author="admin">
+        <comment>Update realm security settings</comment>
+
+        <updateRealm name="production">
+            <!-- Increase token lifespan -->
+            <accessTokenLifespan>600</accessTokenLifespan>
+            <ssoSessionIdleTimeout>3600</ssoSessionIdleTimeout>
+
+            <!-- Update password policy -->
+            <passwordPolicy>length(12) and upperCase(1) and lowerCase(1) and digits(2) and specialChars(1) and notUsername</passwordPolicy>
+        </updateRealm>
+    </changeset>
+
+    <!-- Update Client Configuration -->
+    <changeset version="21" author="admin">
+        <comment>Update frontend client URLs for production</comment>
+
+        <updateClient realm="production" clientId="frontend-app">
+            <rootUrl>https://production.example.com</rootUrl>
+            <redirectUris>
+                <uri>https://production.example.com/*</uri>
+                <uri>https://staging.example.com/*</uri>
+            </redirectUris>
+            <webOrigins>
+                <origin>https://production.example.com</origin>
+                <origin>https://staging.example.com</origin>
+            </webOrigins>
+        </updateClient>
+    </changeset>
+
+    <!-- Update User -->
+    <changeset version="22" author="admin">
+        <comment>Promote user to manager role</comment>
+
+        <updateUser realm="production" username="john.doe">
+            <!-- Add roles -->
+            <addRealmRoles>
+                <role>moderator</role>
+            </addRealmRoles>
+
+            <!-- Add to new groups -->
+            <addGroups>
+                <group>Managers</group>
+            </addGroups>
+
+            <!-- Remove from old groups -->
+            <removeGroups>
+                <group>Employees</group>
+            </removeGroups>
+        </updateUser>
+    </changeset>
+
+    <!-- Delete Resources -->
+    <changeset version="23" author="admin" context="cleanup">
+        <comment>Clean up test resources</comment>
+
+        <!-- Delete a test user -->
+        <deleteUser realm="production" username="test-user"/>
+
+        <!-- Delete unused role -->
+        <deleteRole realm="production" name="deprecated-role"/>
+
+        <!-- Delete unused group -->
+        <deleteGroup realm="production" name="OldTeam"/>
+    </changeset>
+
+    <!-- Delete Protocol Mapper -->
+    <changeset version="24" author="admin">
+        <comment>Remove deprecated mapper</comment>
+
+        <deleteProtocolMapper realm="production" clientId="frontend-app" name="legacy-mapper"/>
+    </changeset>
+
+    <!-- Delete Identity Provider -->
+    <changeset version="25" author="admin" context="cleanup">
+        <comment>Remove deprecated identity provider</comment>
+
+        <deleteIdentityProvider realm="production" alias="old-provider"/>
+    </changeset>
+
+</changelog>

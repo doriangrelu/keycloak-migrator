@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 5: Client Scopes and Protocol Mappers
+
+    This changelog demonstrates:
+    - Creating custom client scopes
+    - Adding protocol mappers for custom claims
+    - Mapping user attributes to tokens
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Custom API Scope -->
+    <changeset version="13" author="admin">
+        <comment>Create custom API access scope</comment>
+
+        <createClientScope realm="production" name="api-access">
+            <scopeDescription>Scope for API access permissions</scopeDescription>
+            <protocol>openid-connect</protocol>
+            <includeInTokenScope>true</includeInTokenScope>
+
+            <protocolMappers>
+                <!-- Add API permissions claim -->
+                <mapper name="api-permissions" protocol="openid-connect" protocolMapper="oidc-hardcoded-claim-mapper">
+                    <config>
+                        <entry key="claim.name">api_permissions</entry>
+                        <entry key="claim.value">read,write</entry>
+                        <entry key="jsonType.label">String</entry>
+                        <entry key="id.token.claim">false</entry>
+                        <entry key="access.token.claim">true</entry>
+                        <entry key="userinfo.token.claim">false</entry>
+                    </config>
+                </mapper>
+            </protocolMappers>
+        </createClientScope>
+    </changeset>
+
+    <!-- Custom User Attributes Scope -->
+    <changeset version="14" author="admin">
+        <comment>Create scope for custom user attributes</comment>
+
+        <createClientScope realm="production" name="custom-attributes">
+            <scopeDescription>Custom user attributes in tokens</scopeDescription>
+            <protocol>openid-connect</protocol>
+            <includeInTokenScope>true</includeInTokenScope>
+
+            <protocolMappers>
+                <!-- Map employee_id attribute -->
+                <mapper name="employee-id-mapper" protocol="openid-connect" protocolMapper="oidc-usermodel-attribute-mapper">
+                    <config>
+                        <entry key="user.attribute">employee_id</entry>
+                        <entry key="claim.name">employee_id</entry>
+                        <entry key="jsonType.label">String</entry>
+                        <entry key="id.token.claim">true</entry>
+                        <entry key="access.token.claim">true</entry>
+                        <entry key="userinfo.token.claim">true</entry>
+                    </config>
+                </mapper>
+
+                <!-- Map department attribute -->
+                <mapper name="department-mapper" protocol="openid-connect" protocolMapper="oidc-usermodel-attribute-mapper">
+                    <config>
+                        <entry key="user.attribute">department</entry>
+                        <entry key="claim.name">department</entry>
+                        <entry key="jsonType.label">String</entry>
+                        <entry key="id.token.claim">true</entry>
+                        <entry key="access.token.claim">true</entry>
+                        <entry key="userinfo.token.claim">true</entry>
+                    </config>
+                </mapper>
+            </protocolMappers>
+        </createClientScope>
+    </changeset>
+
+    <!-- Add Protocol Mapper to Existing Client -->
+    <changeset version="15" author="admin">
+        <comment>Add custom mapper to frontend client</comment>
+
+        <createProtocolMapper realm="production" clientId="frontend-app"
+                              name="groups-mapper" protocol="openid-connect"
+                              protocolMapper="oidc-group-membership-mapper">
+            <config>
+                <entry key="claim.name">groups</entry>
+                <entry key="full.path">false</entry>
+                <entry key="id.token.claim">true</entry>
+                <entry key="access.token.claim">true</entry>
+                <entry key="userinfo.token.claim">true</entry>
+            </config>
+        </createProtocolMapper>
+    </changeset>
+
+    <!-- Audience Mapper for API -->
+    <changeset version="16" author="admin">
+        <comment>Add audience mapper for API validation</comment>
+
+        <createProtocolMapper realm="production" clientId="frontend-app"
+                              name="backend-api-audience" protocol="openid-connect"
+                              protocolMapper="oidc-audience-mapper">
+            <config>
+                <entry key="included.client.audience">backend-api</entry>
+                <entry key="id.token.claim">false</entry>
+                <entry key="access.token.claim">true</entry>
+            </config>
+        </createProtocolMapper>
+    </changeset>
+
+</changelog>

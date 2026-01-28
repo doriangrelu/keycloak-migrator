@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 2: Creating Clients
+
+    This changelog demonstrates how to create different types of clients:
+    - Public client (SPA/Frontend)
+    - Confidential client (Backend API)
+    - Service account client (Machine-to-machine)
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Public Client for Single Page Application -->
+    <changeset version="2" author="admin">
+        <comment>Create public client for frontend SPA</comment>
+
+        <createClient realm="production" clientId="frontend-app">
+            <name>Frontend Application</name>
+            <clientDescription>React/Vue/Angular single-page application</clientDescription>
+            <enabled>true</enabled>
+
+            <!-- Public client (no secret) -->
+            <publicClient>true</publicClient>
+
+            <!-- OAuth2 flows -->
+            <standardFlowEnabled>true</standardFlowEnabled>
+            <directAccessGrantsEnabled>false</directAccessGrantsEnabled>
+            <implicitFlowEnabled>false</implicitFlowEnabled>
+
+            <!-- URLs -->
+            <rootUrl>https://app.example.com</rootUrl>
+            <baseUrl>/</baseUrl>
+            <redirectUris>
+                <uri>https://app.example.com/*</uri>
+                <uri>http://localhost:3000/*</uri>
+            </redirectUris>
+            <webOrigins>
+                <origin>https://app.example.com</origin>
+                <origin>http://localhost:3000</origin>
+            </webOrigins>
+
+            <!-- Client scopes -->
+            <defaultClientScopes>
+                <scope>openid</scope>
+                <scope>profile</scope>
+                <scope>email</scope>
+            </defaultClientScopes>
+        </createClient>
+    </changeset>
+
+    <!-- Confidential Client for Backend API -->
+    <changeset version="3" author="admin">
+        <comment>Create confidential client for backend API</comment>
+
+        <createClient realm="production" clientId="backend-api">
+            <name>Backend API</name>
+            <clientDescription>REST API server</clientDescription>
+            <enabled>true</enabled>
+
+            <!-- Confidential client -->
+            <publicClient>false</publicClient>
+            <secret>your-client-secret-here</secret>
+
+            <!-- Bearer-only for API validation -->
+            <bearerOnly>true</bearerOnly>
+
+            <!-- Disable all flows (bearer-only) -->
+            <standardFlowEnabled>false</standardFlowEnabled>
+            <directAccessGrantsEnabled>false</directAccessGrantsEnabled>
+        </createClient>
+    </changeset>
+
+    <!-- Service Account Client -->
+    <changeset version="4" author="admin">
+        <comment>Create service account for batch processing</comment>
+
+        <createClient realm="production" clientId="batch-processor">
+            <name>Batch Processor Service</name>
+            <clientDescription>Automated batch processing service</clientDescription>
+            <enabled>true</enabled>
+
+            <!-- Confidential with service account -->
+            <publicClient>false</publicClient>
+            <serviceAccountsEnabled>true</serviceAccountsEnabled>
+
+            <!-- Disable interactive flows -->
+            <standardFlowEnabled>false</standardFlowEnabled>
+            <directAccessGrantsEnabled>false</directAccessGrantsEnabled>
+
+            <!-- Custom attributes -->
+            <attributes>
+                <attribute key="service.type">batch</attribute>
+                <attribute key="allowed.origins">internal</attribute>
+            </attributes>
+        </createClient>
+    </changeset>
+
+</changelog>

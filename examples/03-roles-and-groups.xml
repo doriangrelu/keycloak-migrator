@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 3: Roles and Groups
+
+    This changelog demonstrates:
+    - Creating realm roles
+    - Creating client roles
+    - Creating composite roles
+    - Creating groups with role mappings
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Basic Realm Roles -->
+    <changeset version="5" author="admin">
+        <comment>Create basic realm roles</comment>
+
+        <createRealmRole realm="production" name="user">
+            <roleDescription>Standard user with basic access</roleDescription>
+        </createRealmRole>
+
+        <createRealmRole realm="production" name="moderator">
+            <roleDescription>Moderator with content management permissions</roleDescription>
+        </createRealmRole>
+
+        <createRealmRole realm="production" name="admin">
+            <roleDescription>Administrator with full access</roleDescription>
+        </createRealmRole>
+    </changeset>
+
+    <!-- Composite Role (role that includes other roles) -->
+    <changeset version="6" author="admin">
+        <comment>Create composite roles</comment>
+
+        <createRealmRole realm="production" name="super-admin">
+            <roleDescription>Super administrator with all permissions</roleDescription>
+            <composite>true</composite>
+            <composites>
+                <role>admin</role>
+                <role>moderator</role>
+                <role>user</role>
+            </composites>
+        </createRealmRole>
+    </changeset>
+
+    <!-- Client-specific Roles -->
+    <changeset version="7" author="admin">
+        <comment>Create client-specific roles for frontend-app</comment>
+
+        <createClientRole realm="production" clientId="frontend-app" name="dashboard-viewer">
+            <roleDescription>Can view dashboards</roleDescription>
+        </createClientRole>
+
+        <createClientRole realm="production" clientId="frontend-app" name="dashboard-editor">
+            <roleDescription>Can create and edit dashboards</roleDescription>
+        </createClientRole>
+
+        <createClientRole realm="production" clientId="frontend-app" name="dashboard-admin">
+            <roleDescription>Full dashboard management</roleDescription>
+            <composite>true</composite>
+            <composites>
+                <role>dashboard-viewer</role>
+                <role>dashboard-editor</role>
+            </composites>
+        </createClientRole>
+    </changeset>
+
+    <!-- Groups with Role Mappings -->
+    <changeset version="8" author="admin">
+        <comment>Create user groups with role assignments</comment>
+
+        <createGroup realm="production" name="Employees">
+            <realmRoles>
+                <role>user</role>
+            </realmRoles>
+        </createGroup>
+
+        <createGroup realm="production" name="Managers">
+            <realmRoles>
+                <role>user</role>
+                <role>moderator</role>
+            </realmRoles>
+        </createGroup>
+
+        <createGroup realm="production" name="Administrators">
+            <realmRoles>
+                <role>admin</role>
+            </realmRoles>
+            <attributes>
+                <attribute key="department">
+                    <value>IT</value>
+                </attribute>
+            </attributes>
+        </createGroup>
+    </changeset>
+
+    <!-- Nested Groups -->
+    <changeset version="9" author="admin">
+        <comment>Create department-based group hierarchy</comment>
+
+        <createGroup realm="production" name="Engineering">
+            <realmRoles>
+                <role>user</role>
+            </realmRoles>
+        </createGroup>
+
+        <createGroup realm="production" name="Frontend Team" parentGroup="Engineering">
+            <clientRoles>
+                <client clientId="frontend-app">
+                    <role>dashboard-viewer</role>
+                </client>
+            </clientRoles>
+        </createGroup>
+
+        <createGroup realm="production" name="Backend Team" parentGroup="Engineering">
+            <attributes>
+                <attribute key="team-type">
+                    <value>backend</value>
+                </attribute>
+            </attributes>
+        </createGroup>
+    </changeset>
+
+</changelog>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Changeset 1: Create the main application realm -->
+    <changeset version="1" author="admin">
+        <comment>Create the main application realm with basic settings</comment>
+        <createRealm name="my-application">
+            <displayName>My Application</displayName>
+            <enabled>true</enabled>
+            <registrationAllowed>false</registrationAllowed>
+            <resetPasswordAllowed>true</resetPasswordAllowed>
+            <loginWithEmailAllowed>true</loginWithEmailAllowed>
+            <sslRequired>external</sslRequired>
+            <accessTokenLifespan>300</accessTokenLifespan>
+            <ssoSessionIdleTimeout>1800</ssoSessionIdleTimeout>
+            <ssoSessionMaxLifespan>36000</ssoSessionMaxLifespan>
+            <loginTheme>keycloak</loginTheme>
+        </createRealm>
+    </changeset>
+
+    <!-- Changeset 2: Create realm roles -->
+    <changeset version="2" author="admin">
+        <comment>Create basic realm roles</comment>
+        <createRealmRole realm="my-application" name="admin">
+            <description>Administrator role with full access</description>
+        </createRealmRole>
+        <createRealmRole realm="my-application" name="user">
+            <description>Standard user role</description>
+        </createRealmRole>
+        <createRealmRole realm="my-application" name="manager">
+            <description>Manager role with elevated permissions</description>
+            <composite>true</composite>
+            <composites>
+                <role>user</role>
+            </composites>
+        </createRealmRole>
+    </changeset>
+
+    <!-- Changeset 3: Create the backend API client -->
+    <changeset version="3" author="admin">
+        <comment>Create backend API client (confidential)</comment>
+        <createClient realm="my-application" clientId="backend-api">
+            <name>Backend API</name>
+            <description>Backend service API client</description>
+            <enabled>true</enabled>
+            <publicClient>false</publicClient>
+            <serviceAccountsEnabled>true</serviceAccountsEnabled>
+            <directAccessGrantsEnabled>false</directAccessGrantsEnabled>
+            <standardFlowEnabled>false</standardFlowEnabled>
+        </createClient>
+    </changeset>
+
+    <!-- Changeset 4: Create the frontend SPA client -->
+    <changeset version="4" author="admin">
+        <comment>Create frontend SPA client (public)</comment>
+        <createClient realm="my-application" clientId="frontend-spa">
+            <name>Frontend SPA</name>
+            <description>Frontend single-page application</description>
+            <enabled>true</enabled>
+            <publicClient>true</publicClient>
+            <standardFlowEnabled>true</standardFlowEnabled>
+            <directAccessGrantsEnabled>false</directAccessGrantsEnabled>
+            <rootUrl>http://localhost:3000</rootUrl>
+            <baseUrl>/</baseUrl>
+            <redirectUris>
+                <uri>http://localhost:3000/*</uri>
+            </redirectUris>
+            <webOrigins>
+                <origin>http://localhost:3000</origin>
+            </webOrigins>
+        </createClient>
+    </changeset>
+
+    <!-- Changeset 5: Create user groups -->
+    <changeset version="5" author="admin">
+        <comment>Create user groups with role mappings</comment>
+        <createGroup realm="my-application" name="Administrators">
+            <realmRoles>
+                <role>admin</role>
+            </realmRoles>
+        </createGroup>
+        <createGroup realm="my-application" name="Managers">
+            <realmRoles>
+                <role>manager</role>
+            </realmRoles>
+        </createGroup>
+        <createGroup realm="my-application" name="Users">
+            <realmRoles>
+                <role>user</role>
+            </realmRoles>
+        </createGroup>
+    </changeset>
+
+    <!-- Changeset 6: Create a custom client scope -->
+    <changeset version="6" author="admin">
+        <comment>Create custom client scope for API access</comment>
+        <createClientScope realm="my-application" name="api-access">
+            <description>Scope for API access</description>
+            <protocol>openid-connect</protocol>
+            <includeInTokenScope>true</includeInTokenScope>
+        </createClientScope>
+    </changeset>
+
+    <!-- Changeset 7: Create an initial admin user -->
+    <changeset version="7" author="admin">
+        <comment>Create initial admin user</comment>
+        <createUser realm="my-application" username="admin">
+            <email>admin@example.com</email>
+            <firstName>Admin</firstName>
+            <lastName>User</lastName>
+            <enabled>true</enabled>
+            <emailVerified>true</emailVerified>
+            <password>changeme</password>
+            <temporaryPassword>true</temporaryPassword>
+            <realmRoles>
+                <role>admin</role>
+            </realmRoles>
+            <groups>
+                <group>Administrators</group>
+            </groups>
+        </createUser>
+    </changeset>
+
+</changelog>

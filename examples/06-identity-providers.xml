@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 6: Identity Providers
+
+    This changelog demonstrates:
+    - Configuring Google as an identity provider
+    - Configuring SAML identity provider
+    - Configuring generic OIDC provider
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Google Identity Provider -->
+    <changeset version="17" author="admin">
+        <comment>Configure Google as identity provider</comment>
+
+        <createIdentityProvider realm="production" alias="google" providerId="google">
+            <displayName>Sign in with Google</displayName>
+            <enabled>true</enabled>
+            <trustEmail>true</trustEmail>
+            <storeToken>false</storeToken>
+            <firstBrokerLoginFlowAlias>first broker login</firstBrokerLoginFlowAlias>
+
+            <config>
+                <entry key="clientId">your-google-client-id</entry>
+                <entry key="clientSecret">your-google-client-secret</entry>
+                <entry key="defaultScope">openid profile email</entry>
+                <entry key="syncMode">IMPORT</entry>
+            </config>
+        </createIdentityProvider>
+    </changeset>
+
+    <!-- Generic OIDC Provider (Azure AD example) -->
+    <changeset version="18" author="admin">
+        <comment>Configure Azure AD as identity provider</comment>
+
+        <createIdentityProvider realm="production" alias="azure-ad" providerId="oidc">
+            <displayName>Sign in with Azure AD</displayName>
+            <enabled>true</enabled>
+            <trustEmail>true</trustEmail>
+            <storeToken>false</storeToken>
+
+            <config>
+                <entry key="clientId">your-azure-client-id</entry>
+                <entry key="clientSecret">your-azure-client-secret</entry>
+                <entry key="authorizationUrl">https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/authorize</entry>
+                <entry key="tokenUrl">https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token</entry>
+                <entry key="userInfoUrl">https://graph.microsoft.com/oidc/userinfo</entry>
+                <entry key="defaultScope">openid profile email</entry>
+                <entry key="validateSignature">true</entry>
+                <entry key="useJwksUrl">true</entry>
+                <entry key="jwksUrl">https://login.microsoftonline.com/{tenant-id}/discovery/v2.0/keys</entry>
+            </config>
+        </createIdentityProvider>
+    </changeset>
+
+    <!-- GitHub Identity Provider -->
+    <changeset version="19" author="admin">
+        <comment>Configure GitHub as identity provider</comment>
+
+        <createIdentityProvider realm="production" alias="github" providerId="github">
+            <displayName>Sign in with GitHub</displayName>
+            <enabled>true</enabled>
+            <trustEmail>false</trustEmail>
+            <storeToken>true</storeToken>
+
+            <config>
+                <entry key="clientId">your-github-client-id</entry>
+                <entry key="clientSecret">your-github-client-secret</entry>
+                <entry key="defaultScope">user:email</entry>
+            </config>
+        </createIdentityProvider>
+    </changeset>
+
+</changelog>

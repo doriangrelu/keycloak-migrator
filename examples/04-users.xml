@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Example 4: Creating Users
+
+    This changelog demonstrates:
+    - Creating users with various attributes
+    - Assigning roles and groups to users
+    - Setting initial passwords
+    - Requiring actions on first login
+-->
+<changelog xmlns="http://keycloak-migrator.com/changelog">
+
+    <!-- Admin User -->
+    <changeset version="10" author="admin">
+        <comment>Create initial admin user</comment>
+
+        <createUser realm="production" username="admin">
+            <email>admin@example.com</email>
+            <firstName>System</firstName>
+            <lastName>Administrator</lastName>
+            <enabled>true</enabled>
+            <emailVerified>true</emailVerified>
+
+            <!-- Set initial password (temporary = must change on first login) -->
+            <password>ChangeMe123!</password>
+            <temporaryPassword>true</temporaryPassword>
+
+            <!-- Assign realm roles -->
+            <realmRoles>
+                <role>admin</role>
+            </realmRoles>
+
+            <!-- Assign to groups -->
+            <groups>
+                <group>Administrators</group>
+            </groups>
+        </createUser>
+    </changeset>
+
+    <!-- Regular User with Client Roles -->
+    <changeset version="11" author="admin">
+        <comment>Create test user with client roles</comment>
+
+        <createUser realm="production" username="john.doe">
+            <email>john.doe@example.com</email>
+            <firstName>John</firstName>
+            <lastName>Doe</lastName>
+            <enabled>true</enabled>
+            <emailVerified>false</emailVerified>
+
+            <password>Welcome123!</password>
+            <temporaryPassword>true</temporaryPassword>
+
+            <!-- Assign realm roles -->
+            <realmRoles>
+                <role>user</role>
+            </realmRoles>
+
+            <!-- Assign client-specific roles -->
+            <clientRoles>
+                <client clientId="frontend-app">
+                    <role>dashboard-viewer</role>
+                    <role>dashboard-editor</role>
+                </client>
+            </clientRoles>
+
+            <!-- Assign to groups -->
+            <groups>
+                <group>Employees</group>
+                <group>Frontend Team</group>
+            </groups>
+
+            <!-- Required actions on first login -->
+            <requiredActions>
+                <action>VERIFY_EMAIL</action>
+                <action>UPDATE_PASSWORD</action>
+            </requiredActions>
+
+            <!-- Custom attributes -->
+            <attributes>
+                <attribute key="employee_id">
+                    <value>EMP001</value>
+                </attribute>
+                <attribute key="department">
+                    <value>Engineering</value>
+                </attribute>
+            </attributes>
+        </createUser>
+    </changeset>
+
+    <!-- Service Account User (created automatically with service account client) -->
+    <!-- Note: Service account users are automatically created when serviceAccountsEnabled=true -->
+
+    <!-- Bulk user creation example -->
+    <changeset version="12" author="admin">
+        <comment>Create additional team members</comment>
+
+        <createUser realm="production" username="jane.smith">
+            <email>jane.smith@example.com</email>
+            <firstName>Jane</firstName>
+            <lastName>Smith</lastName>
+            <enabled>true</enabled>
+            <emailVerified>true</emailVerified>
+            <realmRoles>
+                <role>user</role>
+                <role>moderator</role>
+            </realmRoles>
+            <groups>
+                <group>Managers</group>
+            </groups>
+        </createUser>
+
+        <createUser realm="production" username="bob.wilson">
+            <email>bob.wilson@example.com</email>
+            <firstName>Bob</firstName>
+            <lastName>Wilson</lastName>
+            <enabled>true</enabled>
+            <emailVerified>true</emailVerified>
+            <realmRoles>
+                <role>user</role>
+            </realmRoles>
+            <groups>
+                <group>Backend Team</group>
+            </groups>
+        </createUser>
+    </changeset>
+
+</changelog>
